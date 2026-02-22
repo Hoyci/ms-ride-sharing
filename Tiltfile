@@ -21,6 +21,41 @@ k8s_yaml('./infra/development/k8s/base/rabbitmq/deployment.yaml')
 k8s_resource('rabbitmq', port_forwards=['5672', '15672'], labels='infra')
 ### End RabbitMQ ###
 
+### API Gateway ###
+user_compile_cmd = 'CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o build/api-gateway ./services/api-gateway/cmd'
+
+local_resource(
+  'api-gateway-compile',
+  user_compile_cmd,
+  deps=['./services/api-gateway', './shared'], 
+  labels="compiles",
+)
+
+docker_build_with_restart(
+  'go-ride/api-gateway',
+  '.',
+  entrypoint=['/app/build/api-gateway'],
+  dockerfile='./infra/development/docker/api-gateway.Dockerfile',
+  only=[
+    './build/api-gateway',
+    './shared',
+  ],
+  live_update=[
+    sync('./build', '/app/build'),
+    sync('./shared', '/app/shared'),
+  ],
+)
+
+k8s_yaml('./infra/development/k8s/services/api-gateway/deployment.yaml')
+k8s_resource(
+  'api-gateway', 
+  resource_deps=['api-gateway-compile', 'rabbitmq'], 
+  port_forwards=['8080:8080'],
+  labels="services",
+)
+### End of user Service ###
+
+
 ### User Service ###
 user_compile_cmd = 'CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o build/user-service ./services/user-service/cmd'
 
@@ -50,7 +85,6 @@ k8s_yaml('./infra/development/k8s/services/user-service/deployment.yaml')
 k8s_resource(
   'user-service', 
   resource_deps=['user-service-compile', 'rabbitmq'], 
-  port_forwards=['9091:9091'],
   labels="services",
 )
 ### End of user Service ###

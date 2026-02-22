@@ -2,13 +2,15 @@ package service
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"ms-ride-sharing/services/user-service/internal/models"
 	"ms-ride-sharing/services/user-service/internal/repository"
 	"ms-ride-sharing/services/user-service/pkg"
-	pbu "ms-ride-sharing/shared/proto/v1/user"
+	userpb "ms-ride-sharing/shared/proto/v1/user"
 
 	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 type UserService struct {
@@ -21,9 +23,9 @@ func NewUserService(repo repository.UserRepository) *UserService {
 	}
 }
 
-func (s *UserService) CreateUser(ctx context.Context, user *pbu.CreateUserRequest) (*models.User, error) {
+func (s *UserService) CreateUser(ctx context.Context, user *userpb.CreateUserRequest) (*models.User, error) {
 	existingUser, err := s.repo.GetByEmail(ctx, user.Email)
-	if err != nil {
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, fmt.Errorf("error checking existing user: %w", err)
 	}
 

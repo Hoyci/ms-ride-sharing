@@ -33,6 +33,7 @@ generate-types:
 		--go-grpc_opt=paths=source_relative \
 		--grpc-gateway_out=$(PROTO_OUT) \
 		--grpc-gateway_opt=paths=source_relative \
-		$(PROTO_DIR)/*/*.proto
+		--validate_out="lang=go,paths=source_relative:$(PROTO_OUT)" \
+		$(PROTO_DIR)/user/*.proto
 
 	@echo "Sucesso! Tipagens geradas em $(PROTO_OUT)."

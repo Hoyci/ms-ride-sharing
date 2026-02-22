@@ -26,7 +26,10 @@ spec:
               cpu: "200m"
           env:
             - name: ENVIRONMENT
-              value: "development"
+              valueFrom:
+                configMapKeyRef:
+                  key: ENVIRONMENT
+                  name: app-config
             - name: USER_SERVICE_PORT
               value: "9091"
             - name: POSTGRES_DB

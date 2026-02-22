@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 	"ms-ride-sharing/services/user-service/internal/config"
-	"ms-ride-sharing/services/user-service/internal/handler"
+	"ms-ride-sharing/services/user-service/internal/handlers"
 	"ms-ride-sharing/services/user-service/internal/repository"
 	"ms-ride-sharing/services/user-service/internal/service"
 	"net"
@@ -30,7 +30,7 @@ func main() {
 	}
 
 	grpcServer := grpcserver.NewServer()
-	handler.NewGRPCHandler(grpcServer, userSvc)
+	handlers.NewGRPCHandler(grpcServer, userSvc)
 
 	// gracefull shutdown
 	ctx, cancel := context.WithCancel(context.Background())
