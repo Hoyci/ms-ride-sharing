@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ride-service-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ride-service-db
+  template:
+    metadata:
+      labels:
+        app: ride-service-db
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:16-alpine
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5432
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "100m"
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
+          env:
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials
+                  key: POSTGRES_DB
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials
+                  key: POSTGRES_PASSWORD
+          args:
+            - "-c"
+            - "max_connections=100"
+            - "-c"
+            - "shared_buffers=256MB"
+            - "-c"
+            - "work_mem=4MB"
+
+          volumeMounts:
+            - name: user-db-storage
+              mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: user-db-storage
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ride-service-db
+spec:
+  type: ClusterIP
+  selector:
+    app: ride-service-db
+  ports:
+    - name: ride-service-db
+      port: 5432
+      targetPort: 5432
