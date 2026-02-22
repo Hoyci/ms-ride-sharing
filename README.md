@@ -41,7 +41,7 @@ docker version
 ```bash
 sudo apt update
 sudo apt install -y curl
-curl -LO "[https://dl.k8s.io/release/$(curl](https://dl.k8s.io/release/$(curl) -Ls [https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl](https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl)"
+curl -LO "https://dl.k8s.io/release/$(curl -Ls https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
 chmod +x kubectl
 sudo mv kubectl /usr/local/bin/
 kubectl version --client
@@ -49,14 +49,14 @@ kubectl version --client
 
 3. Instalar Minikube
 ```bash
-curl -LO [https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64](https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64)
+curl -LO "https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64"
 sudo install minikube-linux-amd64 /usr/local/bin/minikube
 minikube version
 ```
 
 4. Instalar Tilt
 ```bash
-curl -fsSL [https://raw.githubusercontent.com/tilt-dev/tilt/master/scripts/install.sh](https://raw.githubusercontent.com/tilt-dev/tilt/master/scripts/install.sh) | bash
+curl -fsSL "https://raw.githubusercontent.com/tilt-dev/tilt/master/scripts/install.sh" | bash
 tilt version
 ```
 
@@ -80,3 +80,41 @@ O Tilt iniciará todos os recursos (Postgres, Redis, RabbitMQ) e fará o live-re
 ```bash
 make dev-down
 ```
+
+## Como instalar o protobuff compiler e os plugins do gRPC
+
+1. Adicionar o protobuff compiler
+   1. Atualizar os pacotes
+      ```bash
+      sudo apt update
+      ```
+
+   2. Instalar o protobuf-compiler
+      ```bash
+      sudo apt install -y protobuf-compiler
+      ```
+
+   3. Checar o protobuff
+      ```bash
+      protoc --version
+      ```
+
+2. Instalar os plugins do gRPC
+
+    1. Instalar os plugins `protoc-gen-go` e `protoc-gen-go-grpc`
+        ```bash
+        go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+        go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+        ```
+    
+    2. Adicione ao seu PATH
+        ```bash
+        echo 'export PATH="$PATH:$(go env GOPATH)/bin"' >> ~/.bashrc
+        source ~/.bashrc
+        ```
+
+    3. Teste se está funcionado
+        ```bash
+        which protoc-gen-go
+        which protoc-gen-go-grpc
+        ```
