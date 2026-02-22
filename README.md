@@ -69,7 +69,7 @@ O ambiente de desenvolvimento é automatizado utilizando `Make` e `Tilt`.
 make minikube-start
 ```
 
-2. **Suba a infraestrutura e os microsserviços:*
+2. **Suba a infraestrutura e os microsserviços:**
 ```bash
 make dev-up
 ```
