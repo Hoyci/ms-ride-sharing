@@ -7,6 +7,7 @@
 package user
 
 import (
+	_ "github.com/envoyproxy/protoc-gen-validate/validate"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -25,22 +26,22 @@ const (
 type UserType int32
 
 const (
-	UserType_USER_TYPE_UNSPECIFIED UserType = 0
-	UserType_USER_TYPE_RIDER       UserType = 1
-	UserType_USER_TYPE_DRIVER      UserType = 2
+	UserType_UNSPECIFIED UserType = 0
+	UserType_RIDER       UserType = 1
+	UserType_DRIVER      UserType = 2
 )
 
 // Enum value maps for UserType.
 var (
 	UserType_name = map[int32]string{
-		0: "USER_TYPE_UNSPECIFIED",
-		1: "USER_TYPE_RIDER",
-		2: "USER_TYPE_DRIVER",
+		0: "UNSPECIFIED",
+		1: "RIDER",
+		2: "DRIVER",
 	}
 	UserType_value = map[string]int32{
-		"USER_TYPE_UNSPECIFIED": 0,
-		"USER_TYPE_RIDER":       1,
-		"USER_TYPE_DRIVER":      2,
+		"UNSPECIFIED": 0,
+		"RIDER":       1,
+		"DRIVER":      2,
 	}
 )
 
@@ -136,7 +137,7 @@ func (x *CreateUserRequest) GetUserType() UserType {
 	if x != nil {
 		return x.UserType
 	}
-	return UserType_USER_TYPE_UNSPECIFIED
+	return UserType_UNSPECIFIED
 }
 
 type CreateUserResponse struct {
@@ -302,7 +303,7 @@ func (x *LoginResponse) GetType() UserType {
 	if x != nil {
 		return x.Type
 	}
-	return UserType_USER_TYPE_UNSPECIFIED
+	return UserType_UNSPECIFIED
 }
 
 func (x *LoginResponse) GetAccessToken() string {
@@ -507,17 +508,17 @@ var File_user_user_proto protoreflect.FileDescriptor
 
 const file_user_user_proto_rawDesc = "" +
 	"\n" +
-	"\x0fuser/user.proto\x12\x0eridesharing.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\"\xad\x01\n" +
-	"\x11CreateUserRequest\x12 \n" +
-	"\tfull_name\x18\x01 \x01(\tB\x03\xe0A\x02R\bfullName\x12\x19\n" +
-	"\x05email\x18\x02 \x01(\tB\x03\xe0A\x02R\x05email\x12\x1f\n" +
-	"\bpassword\x18\x03 \x01(\tB\x03\xe0A\x02R\bpassword\x12:\n" +
-	"\tuser_type\x18\x04 \x01(\x0e2\x18.ridesharing.v1.UserTypeB\x03\xe0A\x02R\buserType\"$\n" +
+	"\x0fuser/user.proto\x12\x0eridesharing.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x17validate/validate.proto\"\xbe\x01\n" +
+	"\x11CreateUserRequest\x12$\n" +
+	"\tfull_name\x18\x01 \x01(\tB\a\xfaB\x04r\x02\x10\x02R\bfullName\x12\x1d\n" +
+	"\x05email\x18\x02 \x01(\tB\a\xfaB\x04r\x02`\x01R\x05email\x12#\n" +
+	"\bpassword\x18\x03 \x01(\tB\a\xfaB\x04r\x02\x10\x06R\bpassword\x12?\n" +
+	"\tuser_type\x18\x04 \x01(\x0e2\x18.ridesharing.v1.UserTypeB\b\xfaB\x05\x82\x01\x02\x10\x01R\buserType\"$\n" +
 	"\x12CreateUserResponse\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\"J\n" +
-	"\fLoginRequest\x12\x19\n" +
-	"\x05email\x18\x01 \x01(\tB\x03\xe0A\x02R\x05email\x12\x1f\n" +
-	"\bpassword\x18\x02 \x01(\tB\x03\xe0A\x02R\bpassword\"\xbf\x01\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"R\n" +
+	"\fLoginRequest\x12\x1d\n" +
+	"\x05email\x18\x01 \x01(\tB\a\xfaB\x04r\x02`\x01R\x05email\x12#\n" +
+	"\bpassword\x18\x02 \x01(\tB\a\xfaB\x04r\x02\x10\x01R\bpassword\"\xbf\x01\n" +
 	"\rLoginResponse\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x14\n" +
@@ -533,14 +534,15 @@ const file_user_user_proto_rawDesc = "" +
 	"\x05token\x18\x01 \x01(\tR\x05token\"^\n" +
 	"\x14RefreshTokenResponse\x12!\n" +
 	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\x12#\n" +
-	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken*P\n" +
-	"\bUserType\x12\x19\n" +
-	"\x15USER_TYPE_UNSPECIFIED\x10\x00\x12\x13\n" +
-	"\x0fUSER_TYPE_RIDER\x10\x01\x12\x14\n" +
-	"\x10USER_TYPE_DRIVER\x10\x022\xcc\x03\n" +
-	"\vUserService\x12i\n" +
+	"\rrefresh_token\x18\x02 \x01(\tR\frefreshToken*2\n" +
+	"\bUserType\x12\x0f\n" +
+	"\vUNSPECIFIED\x10\x00\x12\t\n" +
+	"\x05RIDER\x10\x01\x12\n" +
 	"\n" +
-	"CreateUser\x12!.ridesharing.v1.CreateUserRequest\x1a\".ridesharing.v1.CreateUserResponse\"\x14\x82\xd3\xe4\x93\x02\x0e:\x01*\"\t/v1/users\x12d\n" +
+	"\x06DRIVER\x10\x022\xd0\x03\n" +
+	"\vUserService\x12m\n" +
+	"\n" +
+	"CreateUser\x12!.ridesharing.v1.CreateUserRequest\x1a\".ridesharing.v1.CreateUserResponse\"\x18\x82\xd3\xe4\x93\x02\x12:\x01*\"\r/api/v1/users\x12d\n" +
 	"\x05Login\x12\x1c.ridesharing.v1.LoginRequest\x1a\x1d.ridesharing.v1.LoginResponse\"\x1e\x82\xd3\xe4\x93\x02\x18:\x01*\"\x13/api/v1/users/login\x12h\n" +
 	"\x06Logout\x12\x1d.ridesharing.v1.LogoutRequest\x1a\x1e.ridesharing.v1.LogoutResponse\"\x1f\x82\xd3\xe4\x93\x02\x19:\x01*\"\x14/api/v1/users/logout\x12\x81\x01\n" +
 	"\fRefreshToken\x12#.ridesharing.v1.RefreshTokenRequest\x1a$.ridesharing.v1.RefreshTokenResponse\"&\x82\xd3\xe4\x93\x02 :\x01*\"\x1b/api/v1/users/refresh-tokenB(Z&ms-ride-sharing/shared/proto/user;userb\x06proto3"

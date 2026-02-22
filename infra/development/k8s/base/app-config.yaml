@@ -4,3 +4,4 @@ metadata:
   name: app-config
 data:
   ENVIRONMENT: "development"
+  USER_SERVICE_ADDR: "user-service:9091"
