@@ -85,8 +85,15 @@ func (s *UserService) Authenticate(ctx context.Context, email, password string) 
 		return nil, ErrInternalServer
 	}
 
-	s.rdbRepo.Set(ctx, "session:"+user.ID.String(), accessTokenData.JTI, jwt.ACCESS_EXPIRATION)
-	s.rdbRepo.Set(ctx, "refresh_session:"+user.ID.String(), refreshTokenData.JTI, jwt.REFRESH_EXPIRATION)
+	pipe := s.rdbRepo.Pipeline()
+
+	pipe.Set(ctx, "session:"+user.ID.String(), accessTokenData.JTI, jwt.ACCESS_EXPIRATION)
+	pipe.Set(ctx, "refresh_session:"+user.ID.String(), refreshTokenData.JTI, jwt.REFRESH_EXPIRATION)
+
+	_, err = pipe.Exec(ctx)
+	if err != nil {
+		return nil, err
+	}
 
 	return &userpb.LoginResponse{
 		Id:           user.ID.String(),
@@ -99,7 +106,11 @@ func (s *UserService) Authenticate(ctx context.Context, email, password string) 
 }
 
 func (s *UserService) Logout(ctx context.Context, userId string) (bool, error) {
-	err := s.rdbRepo.Del(ctx, "session:"+userId).Err()
+	err := s.rdbRepo.Del(
+		ctx,
+		"session:"+userId,
+		"refresh_session:"+userId,
+	).Err()
 	if err != nil {
 		return false, ErrInternalServer
 	}
@@ -108,7 +119,6 @@ func (s *UserService) Logout(ctx context.Context, userId string) (bool, error) {
 }
 
 func (s *UserService) RefreshToken(ctx context.Context, tokenStr string) (*TokenResponse, error) {
-	fmt.Println("tokenStr:", tokenStr)
 	token, err := s.jwtService.Validate(tokenStr)
 	if err != nil {
 		return nil, ErrInvalidToken

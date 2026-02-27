@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"ms-ride-sharing/shared/jwt"
 	"net/http"
@@ -69,8 +68,9 @@ func CORS(next http.Handler) http.Handler {
 
 func AuthMiddleware(jwtSvc *jwt.JWTService, rdbRepo *redis.Client) Middleware {
 	publicRoutes := map[string]bool{
-		"POST:/api/v1/users":       true, // Login
-		"POST:/api/v1/users/login": true, // Register user
+		"POST:/api/v1/users":               true, // Login
+		"POST:/api/v1/users/login":         true, // Register user
+		"POST:/api/v1/users/refresh-token": true, // Refresh token
 	}
 
 	return func(next http.Handler) http.Handler {
@@ -113,10 +113,6 @@ func AuthMiddleware(jwtSvc *jwt.JWTService, rdbRepo *redis.Client) Middleware {
 			jti := claims["jti"].(string)
 
 			activeJti, err := rdbRepo.Get(r.Context(), "session:"+userID).Result()
-
-			fmt.Println(jti)
-			fmt.Println(activeJti)
-
 			if err != nil || activeJti != jti {
 				http.Error(w, "session expired", http.StatusUnauthorized)
 				return

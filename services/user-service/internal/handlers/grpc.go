@@ -11,6 +11,7 @@ import (
 	"github.com/google/uuid"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 )
 
@@ -72,7 +73,18 @@ func (h *GRPCHandler) Login(ctx context.Context, req *userpb.LoginRequest) (*use
 }
 
 func (h *GRPCHandler) Logout(ctx context.Context, req *userpb.LogoutRequest) (*userpb.LogoutResponse, error) {
-	ok, err := h.userService.Logout(ctx, req.UserId)
+	md, ok := metadata.FromIncomingContext(ctx)
+	var userID string
+
+	if ok && len(md.Get("x-user-id")) > 0 {
+		userID = md.Get("x-user-id")[0]
+	}
+
+	if userID == "" {
+		return nil, status.Error(codes.Unauthenticated, "user_id is required")
+	}
+
+	ok, err := h.userService.Logout(ctx, userID)
 	if err != nil {
 		return nil, status.Error(codes.Internal, service.ErrInternalServer.Error())
 	}

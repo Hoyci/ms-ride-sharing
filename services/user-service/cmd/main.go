@@ -24,7 +24,6 @@ func main() {
 
 	db := config.InitDB(configData)
 	userRepo := repository.NewUserRepository(db)
-	fmt.Println(configData.RedisHost, configData.RedisPort)
 	rdbRepo := redis.NewClient(&redis.Options{
 		Addr: fmt.Sprintf("%s:%s", configData.RedisHost, configData.RedisPort),
 	})

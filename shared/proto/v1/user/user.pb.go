@@ -322,7 +322,6 @@ func (x *LoginResponse) GetRefreshToken() string {
 
 type LogoutRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	UserId        string                 `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -355,13 +354,6 @@ func (x *LogoutRequest) ProtoReflect() protoreflect.Message {
 // Deprecated: Use LogoutRequest.ProtoReflect.Descriptor instead.
 func (*LogoutRequest) Descriptor() ([]byte, []int) {
 	return file_user_user_proto_rawDescGZIP(), []int{4}
-}
-
-func (x *LogoutRequest) GetUserId() string {
-	if x != nil {
-		return x.UserId
-	}
-	return ""
 }
 
 type LogoutResponse struct {
@@ -508,7 +500,7 @@ var File_user_user_proto protoreflect.FileDescriptor
 
 const file_user_user_proto_rawDesc = "" +
 	"\n" +
-	"\x0fuser/user.proto\x12\x0eridesharing.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x17validate/validate.proto\"\xbe\x01\n" +
+	"\x0fuser/user.proto\x12\x0eridesharing.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x17validate/validate.proto\"\xbe\x01\n" +
 	"\x11CreateUserRequest\x12$\n" +
 	"\tfull_name\x18\x01 \x01(\tB\a\xfaB\x04r\x02\x10\x02R\bfullName\x12\x1d\n" +
 	"\x05email\x18\x02 \x01(\tB\a\xfaB\x04r\x02`\x01R\x05email\x12#\n" +
@@ -525,9 +517,8 @@ const file_user_user_proto_rawDesc = "" +
 	"\x05email\x18\x03 \x01(\tR\x05email\x12,\n" +
 	"\x04type\x18\x04 \x01(\x0e2\x18.ridesharing.v1.UserTypeR\x04type\x12!\n" +
 	"\faccess_token\x18\x05 \x01(\tR\vaccessToken\x12#\n" +
-	"\rrefresh_token\x18\x06 \x01(\tR\frefreshToken\"-\n" +
-	"\rLogoutRequest\x12\x1c\n" +
-	"\auser_id\x18\x01 \x01(\tB\x03\xe0A\x02R\x06userId\"*\n" +
+	"\rrefresh_token\x18\x06 \x01(\tR\frefreshToken\"\x0f\n" +
+	"\rLogoutRequest\"*\n" +
 	"\x0eLogoutResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\"+\n" +
 	"\x13RefreshTokenRequest\x12\x14\n" +
