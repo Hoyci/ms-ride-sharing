@@ -112,13 +112,13 @@
 - Migrations versionadas por serviço
 
 #### Tasks:
-- [ ] **Task 1.2.1:** Configurar GORM Auto Migration
+- [x] **Task 1.2.1:** Configurar GORM Auto Migration
   - Usar GORM Auto Migrate para criar/atualizar tabelas automaticamente
   - Estruturar diretório: `internal/models/`
   - Criar script de inicialização de database
   - Observação: não incluir models de outros serviços nas migrations (ex.: não auto-migrar `User` no `ride-service`). Manter apenas tabelas pertencentes ao serviço.
 
-- [ ] **Task 1.2.2:** Criar modelo GORM para tabela `users`
+- [x] **Task 1.2.2:** Criar modelo GORM para tabela `users`
 
 
 - [ ] **Task 1.2.3:** Criar modelo GORM para tabela `rides`
@@ -313,11 +313,6 @@
   save 300 10
   ```
 
-- [ ] **Task 1.3.3:** Criar script de inicialização `scripts/redis-init.sh`
-  - Validar conexão com Redis
-  - Criar índices se necessário
-  - Flush database em ambiente de teste (com confirmação)
-
 - [ ] **Task 1.3.4:** Implementar helper para geração de chaves em Go
   ```go
   package rediskeys
@@ -343,7 +338,7 @@
 - Testes unitários com cobertura > 80%
 
 #### Tasks:
-- [ ] **Task 2.1.1:** Setup do projeto User Service
+- [x] **Task 2.1.1:** Setup do projeto User Service
   - Criar estrutura de diretórios: `services/user-service/`
   - Configurar dependências:
     - `github.com/gin-gonic/gin` (HTTP framework)
@@ -353,8 +348,8 @@
 
 - [x] **Task 2.1.2:** Implementar models com GORM
 - [x] **Task 2.1.3:** Implementar repository layer com GORM
-- [] **Task 2.1.4:** Implementar service layer
-- [] **Task 2.1.5:** Implementar controller layer com GRPC
+- [x] **Task 2.1.4:** Implementar service layer
+- [x] **Task 2.1.5:** Implementar controller layer com GRPC
 
 ---
 

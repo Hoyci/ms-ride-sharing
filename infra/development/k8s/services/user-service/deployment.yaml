@@ -57,7 +57,21 @@ spec:
                 secretKeyRef:
                   name: user-service-db-credentials
                   key: POSTGRES_PORT
-            
+            - name: REDIS_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: redis-credentials
+                  key: REDIS_HOST
+            - name: REDIS_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: redis-credentials
+                  key: REDIS_PORT
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: user-service-credentials
+                  key: JWT_SECRET
 
 ---
 apiVersion: v1

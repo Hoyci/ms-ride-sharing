@@ -37,6 +37,21 @@ spec:
                 configMapKeyRef:
                   key: USER_SERVICE_ADDR
                   name: app-config
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: user-service-credentials
+                  key: JWT_SECRET
+            - name: REDIS_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: redis-credentials
+                  key: REDIS_HOST
+            - name: REDIS_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: redis-credentials
+                  key: REDIS_PORT
 ---
 apiVersion: v1
 kind: Service

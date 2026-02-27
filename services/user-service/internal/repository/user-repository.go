@@ -12,8 +12,6 @@ type UserRepository interface {
 	Create(ctx context.Context, user *models.User) error
 	GetByID(ctx context.Context, id uuid.UUID) (*models.User, error)
 	GetByEmail(ctx context.Context, email string) (*models.User, error)
-	Update(ctx context.Context, user *models.User) error
-	Delete(ctx context.Context, id uuid.UUID) error
 }
 
 type userRepository struct {
@@ -44,12 +42,4 @@ func (r *userRepository) GetByEmail(ctx context.Context, email string) (*models.
 		return nil, err
 	}
 	return &user, nil
-}
-
-func (r *userRepository) Update(ctx context.Context, user *models.User) error {
-	return r.db.WithContext(ctx).Save(user).Error
-}
-
-func (r *userRepository) Delete(ctx context.Context, id uuid.UUID) error {
-	return r.db.WithContext(ctx).Delete(&models.User{}, "id = ?", id).Error
 }
