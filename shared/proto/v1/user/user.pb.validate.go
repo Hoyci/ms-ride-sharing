@@ -642,8 +642,6 @@ func (m *LogoutRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for UserId
-
 	if len(errors) > 0 {
 		return LogoutRequestMultiError(errors)
 	}

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"ms-ride-sharing/shared/jwt"
 	"net/http"
 	"os"
 	"os/signal"
@@ -14,6 +15,7 @@ import (
 	userpb "ms-ride-sharing/shared/proto/v1/user"
 
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+	"github.com/redis/go-redis/v9"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/metadata"
@@ -24,10 +26,15 @@ func ConfigServer() {
 	log.Println("registering gRPC service with gRPC-Gateway")
 	configData := LoadConfig()
 
+	jwtSvc := jwt.NewJWTService(configData.JWTSecret)
+	rdbRepo := redis.NewClient(&redis.Options{
+		Addr: fmt.Sprintf("%s:%s", configData.RedisHost, configData.RedisPort),
+	})
+
 	gwmux := runtime.NewServeMux(
 		runtime.WithMarshalerOption(runtime.MIMEWildcard, &runtime.JSONPb{
 			MarshalOptions: protojson.MarshalOptions{
-				UseEnumNumbers:  true,
+				UseEnumNumbers:  false,
 				EmitUnpopulated: true,
 			},
 		}),
@@ -57,7 +64,7 @@ func ConfigServer() {
 		httpHandler.Recoverer,
 		httpHandler.CORS,
 		// httpHandler.AuthMiddleware(jwtSvc, rdb),
-		httpHandler.AuthMiddleware(),
+		httpHandler.AuthMiddleware(jwtSvc, rdbRepo),
 	)(gwmux)
 
 	serverAddr := fmt.Sprintf(":%s", configData.Port)

@@ -8,11 +8,13 @@ import (
 	"ms-ride-sharing/services/user-service/internal/handlers"
 	"ms-ride-sharing/services/user-service/internal/repository"
 	"ms-ride-sharing/services/user-service/internal/service"
+	"ms-ride-sharing/shared/jwt"
 	"net"
 	"os"
 	"os/signal"
 	"syscall"
 
+	"github.com/redis/go-redis/v9"
 	grpcserver "google.golang.org/grpc"
 )
 
@@ -22,7 +24,18 @@ func main() {
 
 	db := config.InitDB(configData)
 	userRepo := repository.NewUserRepository(db)
-	userSvc := service.NewUserService(userRepo)
+	rdbRepo := redis.NewClient(&redis.Options{
+		Addr: fmt.Sprintf("%s:%s", configData.RedisHost, configData.RedisPort),
+	})
+
+	defer func() {
+		if err := rdbRepo.Close(); err != nil {
+			log.Printf("error while closing redis connection: %v", err)
+		}
+	}()
+
+	jwtSvc := jwt.NewJWTService(configData.JWTSecret)
+	userSvc := service.NewUserService(userRepo, jwtSvc, rdbRepo)
 
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%s", configData.Port))
 	if err != nil {
@@ -30,7 +43,7 @@ func main() {
 	}
 
 	grpcServer := grpcserver.NewServer()
-	handlers.NewGRPCHandler(grpcServer, userSvc)
+	handlers.NewGRPCHandler(grpcServer, userSvc, jwtSvc)
 
 	// gracefull shutdown
 	ctx, cancel := context.WithCancel(context.Background())

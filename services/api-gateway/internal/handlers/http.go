@@ -1,10 +1,15 @@
 package handlers
 
 import (
+	"context"
 	"log"
+	"ms-ride-sharing/shared/jwt"
 	"net/http"
 	"strings"
 	"time"
+
+	jwtLib "github.com/golang-jwt/jwt/v5"
+	"github.com/redis/go-redis/v9"
 )
 
 type Middleware func(http.Handler) http.Handler
@@ -61,10 +66,11 @@ func CORS(next http.Handler) http.Handler {
 	})
 }
 
-func AuthMiddleware() Middleware {
+func AuthMiddleware(jwtSvc *jwt.JWTService, rdbRepo *redis.Client) Middleware {
 	publicRoutes := map[string]bool{
-		"POST:/api/v1/users":       true, // Login
-		"POST:/api/v1/users/login": true, // Register user
+		"POST:/api/v1/users":               true, // Login
+		"POST:/api/v1/users/login":         true, // Register user
+		"POST:/api/v1/users/refresh-token": true, // Refresh token
 	}
 
 	return func(next http.Handler) http.Handler {
@@ -90,31 +96,30 @@ func AuthMiddleware() Middleware {
 				return
 			}
 
-			// token, err := jwtSvc.Validate(tokenStr)
+			token, err := jwtSvc.Validate(tokenStr)
 
-			// if err != nil || !token.Valid {
-			// 	http.Error(w, "token invalid or expired", http.StatusUnauthorized)
-			// 	return
-			// }
+			if err != nil || !token.Valid {
+				http.Error(w, "token invalid or expired", http.StatusUnauthorized)
+				return
+			}
 
-			// claims, ok := token.Claims.(jwtLib.MapClaims)
-			// if !ok {
-			// 	http.Error(w, "invalid claims", http.StatusUnauthorized)
-			// 	return
-			// }
+			claims, ok := token.Claims.(jwtLib.MapClaims)
+			if !ok {
+				http.Error(w, "invalid claims", http.StatusUnauthorized)
+				return
+			}
 
-			// userID := claims["sub"].(string)
-			// jti := claims["jti"].(string)
+			userID := claims["sub"].(string)
+			jti := claims["jti"].(string)
 
-			// activeJti, err := rdb.Get(r.Context(), "session:"+userID).Result()
-			// if err == redis.Nil || activeJti != jti {
-			// 	http.Error(w, "session expired", http.StatusUnauthorized)
-			// 	return
-			// }
+			activeJti, err := rdbRepo.Get(r.Context(), "session:"+userID).Result()
+			if err != nil || activeJti != jti {
+				http.Error(w, "session expired", http.StatusUnauthorized)
+				return
+			}
 
-			// ctx := context.WithValue(r.Context(), "user_id", userID)
-			// next.ServeHTTP(w, r.WithContext(ctx))
-			next.ServeHTTP(w, r)
+			ctx := context.WithValue(r.Context(), "user_id", userID)
+			next.ServeHTTP(w, r.WithContext(ctx))
 		})
 	}
 }
